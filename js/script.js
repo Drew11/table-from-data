@@ -78,6 +78,9 @@ function getMonths(a) {
 function setDataToTable(data){
     const columns = [];
     const columnDefs = [];
+    let initialSortedQuery = 0;
+    let dateColumnSortedQuery = 4;
+
     const updateData = data.map(obj=>{
         obj.year = getYear(obj);
         obj.months = getMonths(obj);
@@ -97,20 +100,16 @@ function setDataToTable(data){
 
     });
 
-    let query = 4;
 
     if(trigger === 'months'){
-        console.log(columnDefs)
-        query  = 7;
+        dateColumnSortedQuery  = 7;
+        initialSortedQuery = 7;
+
     }
-
     columnDefs.push({
-        'orderData':[query],
+        'orderData':[dateColumnSortedQuery],
         'targets': [4]
-    } ,
-    );
-
-
+    });
 
     columnDefs[7].visible = false;
     columnDefs[6].visible = false;
@@ -120,7 +119,6 @@ function setDataToTable(data){
         columns,
         columnDefs,
         paging: false,
-        order: [],
     }
 }
 addEvent();
