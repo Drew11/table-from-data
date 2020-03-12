@@ -43,6 +43,7 @@ const dataArr = [
 ];
 
 let trigger ;
+
 function addEvent () {
     const select = $('select[name="query-select"]');
 
@@ -59,8 +60,8 @@ function addEvent () {
             table = $('#example').DataTable(setDataToTable(dataArr));
         }
     });
-
 }
+
 function getYear(obj) {
     const index = obj.birthday_contact.indexOf('-');
     const year = obj.birthday_contact.slice(0, index);
@@ -100,12 +101,10 @@ function setDataToTable(data){
 
     });
 
-
     if(trigger === 'months'){
         dateColumnSortedQuery  = 7;
-        initialSortedQuery = 7;
-
     }
+
     columnDefs.push({
         'orderData':[dateColumnSortedQuery],
         'targets': [4]
