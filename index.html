@@ -8,13 +8,21 @@
     <script src="js/script.js" defer></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
 </head>
+<style>
+    select[name="query-select"] {
+        position: relative;
+        left: 1100px;
+
+    }
+</style>
 <body>
 
-<select name="query-select" size="1">
-    <option value="year">year</option>
-    <option value="months">months</option>
-</select>
+
 <table id="example" class="stripe">
+    <select name="query-select" size="1">
+        <option value="year">year</option>
+        <option value="months">months</option>
+    </select>
     <tbody>
     </tbody>
 </table>

@@ -37,62 +37,54 @@ const dataArr = [
         "lastname":"Горыныч",
         "email":"test@test.com",
         "phonenumber":"33333333333",
-        "birthday_contact":"1998-05-03",
+        "birthday_contact":"1998-11-03",
         "company":"Company 4"
     }
 ];
 
-let selectedQuery ='';
-
+let trigger ;
 function addEvent () {
     const select = $('select[name="query-select"]');
 
     select.change(function (e) {
+        if(e.target.value === 'months'){
+            table.destroy();
+            trigger = 'months';
+            table = $('#example').DataTable(setDataToTable(dataArr));
 
-       const callbakcMap =  {
-            months:()=>{
-                table.destroy();
-                table = $('#example').DataTable(sortedByMonths(dataArr))
-            },
-            year: ()=>{
-                table.destroy();
-                table = $('#example').DataTable(sortedByYear(dataArr));
-            }
-        };
-
-        callbakcMap[e.target.value]();
+        }
+        if(e.target.value === 'year'){
+            trigger = 'year';
+            table.destroy();
+            $('#example').DataTable(setDataToTable(dataArr));
+        }
     });
+
+}
+function getYear(obj) {
+    const index = obj.birthday_contact.indexOf('-');
+    const year = obj.birthday_contact.slice(0, index);
+    return year;
 }
 
-
-function sortedByYear(data){
-    function f(obj) {
-        const index = obj.birthday_contact.indexOf('-');
-        const year = obj.birthday_contact.slice(0, index);
-        return year;
-    }
-    const sorted = [...data].sort((a, b)=> f(b) - f(a) );
-    return setDataToTable(sorted);
+function getMonths(a) {
+    const index = a.birthday_contact.indexOf('-');
+    const secondIndex = a.birthday_contact.slice(index+1, a.birthday_contact.length).indexOf('-');
+    const d = a.birthday_contact.slice(index+1, a.birthday_contact.length);
+    const months = d.slice(0, secondIndex);
+    return months;
 }
-
-function sortedByMonths(data) {
-
-    function f(a) {
-        const index = a.birthday_contact.indexOf('-');
-        const secondIndex = a.birthday_contact.slice(index+1, a.birthday_contact.length).indexOf('-');
-        const d = a.birthday_contact.slice(index+1, a.birthday_contact.length);
-        const months = d.slice(0, secondIndex);
-        return months;
-    }
-    const sorted = [...data].sort((a, b)=>f(b) - f(a));
-    return setDataToTable(sorted);
-}
-
 
 function setDataToTable(data){
     const columns = [];
     const columnDefs = [];
-    const captions = Object.keys(data[0]);
+    const updateData = data.map(obj=>{
+        obj.year = getYear(obj);
+        obj.months = getMonths(obj);
+        return obj;
+    });
+
+    const captions = Object.keys(updateData[0]);
 
     captions.forEach((caption, index)=>{
         columns.push({
@@ -105,12 +97,30 @@ function setDataToTable(data){
 
     });
 
+    let query = 4;
+
+    if(trigger === 'months'){
+        console.log(columnDefs)
+        query  = 7;
+    }
+
+    columnDefs.push({
+        'orderData':[query],
+        'targets': [4]
+    } ,
+    );
+
+
+
+    columnDefs[7].visible = false;
+    columnDefs[6].visible = false;
+
     return {
-        data,
+        data: updateData,
         columns,
         columnDefs,
         paging: false,
-        bSort: false,
+        order: [],
     }
 }
 addEvent();
