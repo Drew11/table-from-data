@@ -54,9 +54,9 @@ function addEvent () {
 
         }
         if(e.target.value === 'year'){
-            trigger = 'year';
             table.destroy();
-            $('#example').DataTable(setDataToTable(dataArr));
+            trigger = 'year';
+            table = $('#example').DataTable(setDataToTable(dataArr));
         }
     });
 
