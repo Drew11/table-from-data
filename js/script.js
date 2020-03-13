@@ -42,25 +42,51 @@ const dataArr = [
     }
 ];
 
-let trigger ;
 
 function addEvent () {
     const select = $('select[name="query-select"]');
 
     select.change(function (e) {
-        if(e.target.value === 'months'){
-            table.destroy();
-            trigger = 'months';
-            table = $('#example').DataTable(setDataToTable(dataArr));
 
+        if(e.target.value === 'months'){
+            const order = [...table.state().order];
+            const options = getOptoinTable(dataArr);
+            const columnDefs = [...options.columnDefs];
+
+            columnDefs.push({
+                orderData: [7],
+                targets: [4],
+            });
+
+            const data = {...options,
+                            order,
+                            columnDefs
+                };
+            table.destroy();
+            table = $('#example').DataTable(data);
         }
         if(e.target.value === 'year'){
+
+            const order = [...table.state().order];
+            const options = getOptoinTable(dataArr);
+            let columnDefs = [...options.columnDefs];
+
+            columnDefs.push({
+                orderData: [4],
+                targets: [4],
+            });
+
+            const data = {...options,
+                order,
+                columnDefs
+            };
             table.destroy();
-            trigger = 'year';
-            table = $('#example').DataTable(setDataToTable(dataArr));
+            table = $('#example').DataTable(data);
         }
     });
 }
+
+addEvent();
 
 function getYear(obj) {
     const index = obj.birthday_contact.indexOf('-');
@@ -76,38 +102,26 @@ function getMonths(a) {
     return months;
 }
 
-function setDataToTable(data){
+function getOptoinTable(data){
     const columns = [];
     const columnDefs = [];
-    let initialSortedQuery = 0;
-    let dateColumnSortedQuery = 4;
-
     const updateData = data.map(obj=>{
         obj.year = getYear(obj);
         obj.months = getMonths(obj);
         return obj;
     });
-
     const captions = Object.keys(updateData[0]);
 
     captions.forEach((caption, index)=>{
         columns.push({
             data: caption
         });
+
         columnDefs.push({
             targets: index,
             title: captions[index]
         });
 
-    });
-
-    if(trigger === 'months'){
-        dateColumnSortedQuery  = 7;
-    }
-
-    columnDefs.push({
-        'orderData':[dateColumnSortedQuery],
-        'targets': [4]
     });
 
     columnDefs[7].visible = false;
@@ -118,8 +132,11 @@ function setDataToTable(data){
         columns,
         columnDefs,
         paging: false,
+        retrieve: true,
+        stateSave: true,
     }
 }
-addEvent();
 
-let table = $('#example').DataTable(setDataToTable(dataArr));
+
+let table = $('#example').DataTable(getOptoinTable(dataArr));
+
